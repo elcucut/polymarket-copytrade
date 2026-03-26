@@ -159,6 +159,21 @@ Este modo avanzado replica el riesgo que asume el trader:
 - Abre posición de $1,000 → 10% de su capital
 - Tú tienes $1,000 → inviertes $100 (10%)
 
+### Protecciones de seguridad
+
+El bot incluye protecciones automáticas:
+
+1. **Trader invierte >100%** (apalancamiento/extremo):
+   - Se ajusta automáticamente al 95% de tu balance disponible
+   - Se registra en logs: `"Trader invierte 120%, ajustando a máximo seguro"`
+
+2. **Cantidad calculada > balance disponible**:
+   - Se ajusta al 95% de tu balance (dejando 5% para fees/gas)
+   - Se registra en logs: `"Cantidad calculada excede balance, ajustando"`
+
+3. **Balance insuficiente** (< $1):
+   - El trade se omite automáticamente
+
 ⚠️ **Requiere configurar Polygon RPC** para consultar el balance on-chain.
 
 ## Seguridad

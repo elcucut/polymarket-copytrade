@@ -181,8 +181,21 @@ class CopyTrader:
                     # Calcular nuestra inversión proporcional
                     amount = our_balance * trader_pct
 
-                    self.log(f"  📈 Trader invierte {trader_pct:.2%} de su capital total")
-                    self.log(f"  📈 Nosotros invertimos: ${amount:.2f} ({trader_pct:.2%} de ${our_balance:.2f})")
+                    # PROTECCIÓN: Si el trader invierte más del 100% (apalancamiento/extremo),
+                    # o si nosotros no tenemos suficiente, ajustar al máximo posible
+                    max_safe_amount = our_balance * 0.95  # Dejar 5% para fees/gas
+
+                    if trader_pct > 1.0:
+                        self.log(f"  ⚠️ Trader invierte {trader_pct:.2%} (>100%, posible apalancamiento)")
+                        self.log(f"  ⚠️ Ajustando a máximo seguro: ${max_safe_amount:.2f} (95% de balance)")
+                        amount = max_safe_amount
+                    elif amount > max_safe_amount:
+                        self.log(f"  ⚠️ Cantidad calculada (${amount:.2f}) excede balance disponible")
+                        self.log(f"  ⚠️ Ajustando a máximo seguro: ${max_safe_amount:.2f} (95% de balance)")
+                        amount = max_safe_amount
+                    else:
+                        self.log(f"  📈 Trader invierte {trader_pct:.2%} de su capital total")
+                        self.log(f"  📈 Nosotros invertimos: ${amount:.2f} ({trader_pct:.2%} de ${our_balance:.2f})")
 
             except Exception as e:
                 self.log(f"Error en modo copy_trader_pct, usando cantidad fija: {e}")
