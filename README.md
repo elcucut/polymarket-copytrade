@@ -59,37 +59,28 @@ El bot funciona mejor con cuentas creadas mediante **Email/Magic** (no MetaMask)
 4. Ingresa tu email y verifica con el código
 5. Configura tu perfil
 
-#### Paso 2: Obtener tu clave privada y funder address
+#### Paso 2: Obtener tu Funder Address
 
-Para que el bot opere, necesitas exportar tus credenciales de Polymarket:
+1. Inicia sesión en [Polymarket](https://polymarket.com)
+2. Ve a tu **perfil** (click en tu foto/nombre arriba a la derecha)
+3. Al lado de tu nombre de usuario, verás un botón **"Copy address"**
+4. Click y pégalo en el campo `funder_address` de tu configuración
 
-**Método A - Desde la consola del navegador:**
+La dirección tendrá formato: `0x...`
 
-1. Inicia sesión en [Polymarket](https://polymarket.com) con tu email
-2. Abre las **Herramientas de desarrollador** (F12)
-3. Ve a la pestaña **Console**
-4. Pega y ejecuta este código:
+#### Paso 3: Exportar tu Private Key
 
-```javascript
-// Obtener la clave privada
-const privateKey = localStorage.getItem('privKey');
-console.log('Private Key:', privateKey);
+1. Ve a: https://polymarket.com/settings?tab=export-private-key
+2. Sigue los pasos de verificación de seguridad que te pide Polymarket
+3. Una vez verificado, se te mostrará tu **Private Key**
+4. Copia la clave completa (empieza con `0x`)
+5. Pégala en el campo `private_key` de tu configuración
 
-// Obtener la dirección (funder address)
-const userAddress = localStorage.getItem('userAddress');
-console.log('Funder Address:', userAddress);
-```
+⚠️ **Importante**: Nunca compartas tu private key con nadie. Guárdala de forma segura.
 
-5. Copia ambos valores (empezarán con `0x`)
+#### Paso 4: Configurar en el bot
 
-**Método B - Desde la extensión de navegador:**
-
-1. Instala la extensión "Storage Area Explorer" o similar
-2. Ve a Polymarket (logueado)
-3. Abre la extensión y busca en **Local Storage** → `https://polymarket.com`
-4. Busca las claves `privKey` y `userAddress`
-
-#### Paso 3: Configurar en el bot
+Edita tu `config.json` con los datos obtenidos:
 
 ```json
 "wallet": {
