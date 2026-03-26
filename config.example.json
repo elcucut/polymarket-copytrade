@@ -1,0 +1,54 @@
+{
+  "wallet": {
+    "private_key": "0xYOUR_PRIVATE_KEY_HERE",
+    "funder_address": "0xYOUR_FUNDER_ADDRESS_HERE",
+    "signature_type": 1,
+    "polygon_rpc_url": "https://polygon-mainnet.g.alchemy.com/v2/YOUR_ALCHEMY_KEY"
+  },
+  "trading": {
+    "mode": "copy_trader_pct",
+    "fixed_amount": 5.0,
+    "portfolio_pct": 2.0,
+    "min_win_rate": 0.55,
+    "max_daily_loss": 50.0,
+    "active_hours_start": 0,
+    "active_hours_end": 24
+  },
+  "telegram": {
+    "bot_token": "YOUR_TELEGRAM_BOT_TOKEN",
+    "chat_id": "YOUR_CHAT_ID"
+  },
+  "tracked_wallets": [
+    {
+      "address": "0x6c743aafd813475986dcd930f380a1f50901bd4e",
+      "name": "middleoftheocean",
+      "win_rate": 0.55
+    },
+    {
+      "address": "0x44c1dfe43260c94ed4f1d00de2e1f80fb113ebc1",
+      "name": "aenews2",
+      "win_rate": 0.55
+    },
+    {
+      "address": "0xf2f6af4f27ec2dcf4072095ab804016e14cd5817",
+      "name": "gopfan2",
+      "win_rate": 0.55
+    },
+    {
+      "address": "0xa4b366ad22fc0d06f1e934ff468e8922431a87b8",
+      "name": "holymoses7",
+      "win_rate": 0.55
+    },
+    {
+      "address": "0x9d84ce0306f8551e02efef1680475fc0f1dc1344",
+      "name": "ImJustKen",
+      "win_rate": 0.632
+    },
+    {
+      "address": "0x2005d16a84ceefa912d4e380cd32e7ff827875ea",
+      "name": "RN1",
+      "win_rate": 0.563
+    }
+  ],
+  "poll_interval": 120
+}
