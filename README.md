@@ -48,22 +48,68 @@ cp config.example.json config.json
 2. **Editar `config.json`** con tus datos:
 
 ### Wallet (Obligatorio)
+
+#### Paso 1: Crear cuenta en Polymarket (modo Email/Magic)
+
+El bot funciona mejor con cuentas creadas mediante **Email/Magic** (no MetaMask):
+
+1. Ve a [Polymarket.com](https://polymarket.com)
+2. Click en **"Sign Up"** o **"Connect"**
+3. Selecciona **"Continue with Email"** (no uses MetaMask para el bot)
+4. Ingresa tu email y verifica con el código
+5. Configura tu perfil
+
+#### Paso 2: Obtener tu clave privada y funder address
+
+Para que el bot opere, necesitas exportar tus credenciales de Polymarket:
+
+**Método A - Desde la consola del navegador:**
+
+1. Inicia sesión en [Polymarket](https://polymarket.com) con tu email
+2. Abre las **Herramientas de desarrollador** (F12)
+3. Ve a la pestaña **Console**
+4. Pega y ejecuta este código:
+
+```javascript
+// Obtener la clave privada
+const privateKey = localStorage.getItem('privKey');
+console.log('Private Key:', privateKey);
+
+// Obtener la dirección (funder address)
+const userAddress = localStorage.getItem('userAddress');
+console.log('Funder Address:', userAddress);
+```
+
+5. Copia ambos valores (empezarán con `0x`)
+
+**Método B - Desde la extensión de navegador:**
+
+1. Instala la extensión "Storage Area Explorer" o similar
+2. Ve a Polymarket (logueado)
+3. Abre la extensión y busca en **Local Storage** → `https://polymarket.com`
+4. Busca las claves `privKey` y `userAddress`
+
+#### Paso 3: Configurar en el bot
+
 ```json
 "wallet": {
-  "private_key": "0xTU_CLAVE_PRIVADA",
-  "funder_address": "0xTU_DIRECCION",
+  "private_key": "0xTU_CLAVE_PRIVADA_AQUI",
+  "funder_address": "0xTU_DIRECCION_AQUI",
   "signature_type": 1,
   "polygon_rpc_url": "https://polygon-mainnet.g.alchemy.com/v2/TU_API_KEY"
 }
 ```
 
 **Tipos de firma**:
-- `0` = EOA/MetaMask
-- `1` = Email/Magic (más común en Polymarket)
+- `0` = EOA/MetaMask (no recomendado para este bot)
+- `1` = Email/Magic ✅ **Recomendado y más estable**
 - `2` = Browser
 
-**Polygon RPC** (solo para modo "Copiar % trader"):
-- Gratis en [Alchemy](https://www.alchemy.com/) o [Infura](https://infura.io/)
+**Polygon RPC** (solo requerido para modo "Copiar % trader"):
+- Ve a [Alchemy](https://www.alchemy.com/) y crea una cuenta gratuita
+- Crea una nueva app en la red **Polygon Mainnet**
+- Copia la URL del HTTP API
+- URL típica: `https://polygon-mainnet.g.alchemy.com/v2/TU_API_KEY`
 
 ### Modo de Trading
 ```json
