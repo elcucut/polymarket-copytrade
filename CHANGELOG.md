@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Balance detection bug causing all trades to be skipped with "$0.00 calculated amount":
+  - `get_balance()` now uses on-chain query as primary method (more reliable)
+  - Added debug logging to show balance detection in logs
+  - Fixed indentation error in `copy_trader_pct` mode protections
+  - Added fallback when balance is 0 or cannot be retrieved
+
 ## [1.1.0] - 2026-03-26
 
 ### Added

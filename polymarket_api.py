@@ -261,26 +261,36 @@ class PolymarketAPI:
     
     def get_balance(self):
         """
-        Obtiene el balance USDC disponible
+        Obtiene el balance USDC disponible usando on-chain query
         
         Returns:
             Balance USDC como float
         """
         try:
-            # Intentar obtener el balance usando el cliente
-            balance = self.client.get_balance()
-            if balance:
-                return float(balance) / 1e6  # USDC tiene 6 decimales
-            return 0.0
-        except Exception as e:
-            print(f"Error obteniendo balance: {e}")
-            # Fallback: intentar con allowance
+            # Usar consulta on-chain directa (más confiable que CLOB client)
+            balance = self.get_wallet_usdc_balance(self.funder_address)
+            if balance > 0:
+                return balance
+            
+            # Fallback: intentar con CLOB client
+            try:
+                balance = self.client.get_balance()
+                if balance:
+                    return float(balance) / 1e6
+            except:
+                pass
+            
+            # Fallback 2: allowances
             try:
                 allowances = self.client.get_allowances()
                 if allowances:
                     return float(allowances) / 1e6
             except:
                 pass
+            
+            return 0.0
+        except Exception as e:
+            print(f"Error obteniendo balance: {e}")
             return 0.0
     
     def execute_order(self, token_id, amount_usdc):
