@@ -211,11 +211,18 @@ class CopyTrader:
         else:
             amount = trading_config.get('fixed_amount', 5.0)
         
-        # CHECK 5 — Cantidad mínima
+        # CHECK 5 — Cantidad mínima (ajustar a mínimo en lugar de saltar)
         if amount < 1.0:
-            reason = f"Cantidad calculada (${amount:.2f}) por debajo del mínimo ($1.00)"
-            self._skip_trade(reason, market, wallet, position)
-            return
+            # En lugar de saltar el trade, invertir el mínimo ($1) si tenemos balance
+            our_balance = self.api.get_balance()
+            if our_balance >= 1.0:
+                self.log(f"  ⚠️ Cantidad calculada (${amount:.2f}) < mínimo ($1.00)")
+                self.log(f"  📈 Ajustando a inversión mínima: $1.00")
+                amount = 1.0
+            else:
+                reason = f"Balance insuficiente (${our_balance:.2f}) para inversión mínima ($1.00)"
+                self._skip_trade(reason, market, wallet, position)
+                return
         
         # Ejecutar orden
         token_id = position.get('token_id') or position.get('asset', '')
