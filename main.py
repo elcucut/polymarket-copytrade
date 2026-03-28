@@ -435,6 +435,7 @@ class App:
             
             updated = 0
             errors = 0
+            closed_markets = 0
             
             for trade in open_trades:
                 token_id = trade.get('token_id')
@@ -448,6 +449,12 @@ class App:
                     current_price = api.get_token_price(token_id)
                     entry_price = trade.get('price_at_entry', 0)
                     amount = trade.get('amount_usdc', 0)
+                    
+                    # Si el precio es None, el mercado está cerrado/resuelto
+                    if current_price is None:
+                        closed_markets += 1
+                        self.log(f"  🔒 {trade.get('trader_name', '')}: Mercado cerrado/resuelto - Usa 'Cerrar Posición' o 'Importar CSV'")
+                        continue
                     
                     if entry_price > 0 and current_price > 0:
                         # Calcular P&L no realizado
@@ -465,9 +472,13 @@ class App:
                     continue
             
             msg = f"P&L actualizado: {updated} posiciones"
+            if closed_markets > 0:
+                msg += f" | {closed_markets} mercados cerrados (requiere cerrar manual)"
             if errors > 0:
-                msg += f" ({errors} errores)"
+                msg += f" | {errors} errores"
             self.log(msg)
+            if closed_markets > 0:
+                self.log("💡 Tip: Para mercados cerrados, usa 'Cerrar Posición' o 'Importar CSV' de Polymarket")
             self.refresh_trades()
             
         except Exception as e:

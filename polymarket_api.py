@@ -250,12 +250,17 @@ class PolymarketAPI:
             token_id: ID del token
             
         Returns:
-            Precio entre 0 y 1
+            Precio entre 0 y 1, o None si el mercado está cerrado
         """
         try:
             price = self.client.get_price(token_id, side=BUY)
             return float(price) if price else 0.5
         except Exception as e:
+            error_msg = str(e)
+            # Si es 404, el mercado está cerrado/resuelto
+            if "404" in error_msg or "No orderbook exists" in error_msg:
+                print(f"Mercado cerrado/resuelto (token: {token_id[:20]}...)")
+                return None  # Indica que el mercado ya no existe
             print(f"Error obteniendo precio: {e}")
             return 0.5
     
