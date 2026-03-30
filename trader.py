@@ -51,6 +51,11 @@ class CopyTrader:
             if not address:
                 continue
             
+            # Verificar si el trader está activo
+            if not wallet.get('active', True):
+                self.log(f"⏸️ {wallet.get('name', address[:8])} está desactivado, saltando...")
+                continue
+            
             try:
                 self.log(f"Verificando {wallet.get('name', address[:8])}...")
                 

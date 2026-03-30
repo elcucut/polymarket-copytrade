@@ -204,12 +204,19 @@ class App:
         list_frame.pack(fill='both', expand=True, padx=10, pady=10)
         
         # Treeview
-        columns = ('Nombre', 'Dirección', 'Win Rate')
+        columns = ('Nombre', 'Dirección', 'Win Rate', 'Estado')
         self.traders_tree = ttk.Treeview(list_frame, columns=columns, show='headings', height=10)
         
         for col in columns:
             self.traders_tree.heading(col, text=col)
-            self.traders_tree.column(col, width=200 if col == 'Nombre' else 300 if col == 'Dirección' else 100)
+            if col == 'Nombre':
+                self.traders_tree.column(col, width=150)
+            elif col == 'Dirección':
+                self.traders_tree.column(col, width=250)
+            elif col == 'Win Rate':
+                self.traders_tree.column(col, width=80)
+            else:
+                self.traders_tree.column(col, width=80)
         
         # Scrollbar
         scrollbar = ttk.Scrollbar(list_frame, orient='vertical', command=self.traders_tree.yview)
@@ -223,6 +230,7 @@ class App:
         btn_frame.pack(fill='x', padx=10, pady=5)
         
         ttk.Button(btn_frame, text="🗑️ Eliminar Seleccionado", command=self.remove_trader).pack(side='left', padx=5)
+        ttk.Button(btn_frame, text="⏸️ Activar/Desactivar", command=self.toggle_trader).pack(side='left', padx=5)
         ttk.Button(btn_frame, text="🔄 Actualizar Lista", command=self.refresh_traders_list).pack(side='left', padx=5)
         
         # Cargar traders existentes
@@ -1033,7 +1041,8 @@ class App:
         trader = {
             'address': address,
             'name': name or address[:8],
-            'win_rate': win_rate
+            'win_rate': win_rate,
+            'active': True
         }
         
         if 'tracked_wallets' not in self.config:
@@ -1073,17 +1082,48 @@ class App:
         self.save_config()
         self.refresh_traders_list()
     
+    def toggle_trader(self):
+        """Activa/desactiva el trader seleccionado"""
+        selection = self.traders_tree.selection()
+        if not selection:
+            messagebox.showwarning("Selección", "Selecciona un trader para activar/desactivar")
+            return
+        
+        item = self.traders_tree.item(selection[0])
+        address = item['values'][1]
+        
+        # Buscar el trader y toggle
+        for trader in self.config.get('tracked_wallets', []):
+            if trader.get('address') == address:
+                current_status = trader.get('active', True)
+                trader['active'] = not current_status
+                new_status = "ON" if trader['active'] else "OFF"
+                self.log(f"Trader {trader.get('name', address[:8])} {new_status}")
+                break
+        
+        self.save_config()
+        self.refresh_traders_list()
+    
     def refresh_traders_list(self):
         """Actualiza la lista de traders"""
         for item in self.traders_tree.get_children():
             self.traders_tree.delete(item)
         
+        # Configurar colores para estados
+        self.traders_tree.tag_configure('active', foreground='#22c55e')
+        self.traders_tree.tag_configure('inactive', foreground='#94a3b8')
+        
         for trader in self.config.get('tracked_wallets', []):
+            is_active = trader.get('active', True)
+            status_text = "🟢 ON" if is_active else "⚪ OFF"
+            tag = 'active' if is_active else 'inactive'
+            
             self.traders_tree.insert('', 'end', values=(
                 trader.get('name', ''),
                 trader.get('address', ''),
-                f"{trader.get('win_rate', 0):.0%}"
-            ))
+                f"{trader.get('win_rate', 0):.0%}",
+                status_text
+            ), tags=(tag,))
     
     def test_telegram(self):
         """Envía mensaje de prueba"""
